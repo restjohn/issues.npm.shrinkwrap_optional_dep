@@ -75,7 +75,7 @@ your macOS shell, execute the following commands.
 ```shell
 npm pack ./lib1.shrinkwrap
 npm i -g http-server
-http-server --listen 127.0.0.1:8080 .
+http-server -a 127.0.0.1 .
 ```
 `http-server` is now running in the foreground in that shell.  Open another shell window and execute the following
 commands from the root repository directory.
