@@ -44,6 +44,33 @@ npm ci
 
 ## Other Notes
 
+### Dev Dependency
+Note that the path to the OS-constrained dependency, `fsevents`, also runs through a `devDependencies` dependency, so
+npm should not be attempting to install `fsevents` due to that condition, let alone the OS constraint and optional
+dependency status.
+
+### Missing `optional` Flag
+Observe that the [`app1` package-lock](./app1/package-lock.json) contains an entry for the transitive, optional
+`fsevents` dependency.  However, that entry does not contain the `"optional": true` key-value, as does the
+[`lib.shrinkwrap` shrinkwrap](./lib1.shrinkwrap/npm-shrinkwrap.json) file.
+```json
+    "node_modules/@restjohn/issues.transitive-optional-dep.lib1.shrinkwrap/node_modules/fsevents": {
+      "version": "2.3.3",
+      "resolved": "https://registry.npmjs.org/fsevents/-/fsevents-2.3.3.tgz",
+      "integrity": "sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==",
+      "extraneous": true,
+      "hasInstallScript": true,
+      "os": [
+        "darwin"
+      ],
+      "engines": {
+        "node": "^8.16.0 || ^10.6.0 || >=11.0.0"
+      }
+    },
+```
+If you manually add `"optional": true` to the above block in the `app1` package-lock, `npm ci` for the `app1` package
+on a non-Darwin platform succeeds.
+
 ### Without Shrinkwrap
 Running `npm ci` in the `app2` package produces no error, because `app2` depends on the published [`lib1.lock`](https://www.npmjs.com/package/@restjohn/issues.transitive-optional-dep.lib1.lock)
 package, which does not use `npm-shrinkwrap.json` as `lib1.shrinkwrap` does.
